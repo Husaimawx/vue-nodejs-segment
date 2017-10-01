@@ -3,9 +3,9 @@ import store from '../vuex/store';
 import Router from 'vue-router';
 import Layout from '@/pages/Layout';
 import UserIndex from '@/pages/user/UserIndex';
-import QuestionList from '@/pages/main/QuestionList';
-import Ask from '@/pages/main/Ask';
-import QuestionDetail from '@/pages/main/QuestionDetail';
+import QuestionList from '@/pages/question/QuestionList';
+import Ask from '@/pages/question/Ask';
+import QuestionDetail from '@/pages/question/QuestionDetail';
 
 
 Vue.use(Router);

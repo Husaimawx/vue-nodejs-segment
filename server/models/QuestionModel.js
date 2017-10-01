@@ -128,6 +128,7 @@ module.exports = {
 
     /**
      * 获取问题详情
+     * todo/回答列表
      */
     questionDetail(req,res){
         let data = {
@@ -142,6 +143,12 @@ module.exports = {
 
         // views+1
         let uptSql = ' update questions set views=views+1 where q_id = ?';
+
+        // 回答总数
+        let answerCountSql = 'select count(*) from answers where a_id = ?';
+
+        // 回答列表
+        let answerSql = 'select a_id as answerId,u.username, a_content as answer, a.create_time as createTime,votes from answer as a INNER JOIN user as u on a.u_id = u.uid where q_id = ?'
 
         pool.getConnection((err,conn)=>{
             if(err){
@@ -172,7 +179,7 @@ module.exports = {
             ],
             function(err,rs){
                 if(err){
-                    data.code = 400;
+                    data.code = 401;
                     data.msg = err.message;
                     res.send(data);
                     return;
@@ -181,6 +188,59 @@ module.exports = {
             });
             conn.release();
         });
-    }
+    },
+
+
+    /**
+     * 撰写答案
+     */
+    answer(req,res){
+        let data = {
+            code: 200,
+            msg: 'success',
+            data: ''
+        };
+
+        let uid = req.session.sessionID;
+        // 写答案
+        let answerSql = 'insert answers(u_id,q_id,a_content) values(?,?,?)';
+        let anserParam = [];
+
+        // question表answer+1
+        let uptSql = 'update questions set answer=answer+1 where q_id = ?';
+        let queParams =[];
+        pool.getConnection((err,conn)=>{
+            if(err){
+                data.code = 401;
+                data.msg = err.message;
+                res.send(data);
+                return;
+            }
+            async.series([
+                function(callback){
+                    // 写入答案
+                    conn.query(answerSql,anserParam,(err,rs)=>{
+                        callback(null,rs)
+                    });
+                },
+                function(callback){
+                    // question表answer+1
+                    conn.query(uptSql,queParam,(err,rs)=>{
+                        callback(null,'success');
+                    });
+                }
+            ],
+            function(err,result){
+                if(err){
+                    data.code = 401,
+                    data.msg = err.message
+                    res.send(data);
+                    return;
+                }
+                
+            });
+            conn.release();
+        });
+    } 
 
 };

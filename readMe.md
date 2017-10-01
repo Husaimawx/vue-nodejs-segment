@@ -39,7 +39,7 @@
 ### mysql tables
 ```mysql
 
-    // 用户表
+    # 用户表
     CREATE TABLE `user` (
         `uid` int(11) NOT NULL AUTO_INCREMENT COMMENT '用户id',
         `mobile` char(15) DEFAULT NULL,
@@ -54,7 +54,7 @@
         UNIQUE KEY `mobile_unique` (`mobile`) USING BTREE
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-    // 问题表
+    # 问题表
     create table questions(
         q_id smallint unsigned primary key auto_increment,
         q_title varchar(220) not null,
@@ -69,4 +69,23 @@
         last_res_time timestamp
     )engine=innodb default charset=utf8;
    
+
+   # 回答表
+    create table answers(
+        `a_id` int unsigned not null primary key auto_increment comment '回答id',
+        `u_id` int unsigned not null comment '用户id',
+        `q_id` int unsigned  not null comment '问题id',
+        `a_content` longtext not null comment '回答内容',
+        `votes` int not null default 0 comment '票数',
+        `create_time` timestamp not null default current_timestamp
+    )engine=innodb default charset=utf8;
+
+    # 评论表 
+    create table comments(
+        `c_id` int unsigned primary key auto_increment comment '评论id',
+        `a_id` int unsigned not null comment '回答id',
+        `c_content` longtext not null comment '评论内容',
+        `create_time` timestamp not null default current_timestamp
+    )engine=innodb default charset=utf8;
+    
 ```

@@ -11,24 +11,44 @@
                 <span class="time">{{time}}前提问</span>
             </div>
         </div>
-        <div class="html ql-editor" v-html="questionDetail"></div>
+        <hr>
+        <!-- 问题详情外层包裹 -->
+
+        <div class="question-wrapper">
+            <div class="votes">
+                <span class="up"></span>
+                <br>
+                <span class="num">{{votes}}</span>
+                <br>
+                <span class="down"></span>
+            </div>
+            <!-- 问题详情 -->
+            <div class="ql-editor" v-html="questionDetail"></div>
+        </div>
+        <answer></answer>
     </div>
 </template>
 <script>
+import answer from './answer/answer'
 import { quillEditor } from 'vue-quill-editor'
 import { QUESTION_DETAIL } from '@/api/api'
 
 export default {
+    components:{
+        answer
+    },
+
     data(){
         return {
             questionTitle:'',
             username:'',
-            time: '5h前',
-            tags:['html','css'],
+            time: '',
+            tags:[],
             userId:'',
             questionDetail:"", 
             q_id:0,
             content:"",
+            votes:0,
             editorOption: {
                 modules: {
                     toolbar: [
@@ -157,9 +177,65 @@ export default {
             
         }
 
-        // 富文本编辑器
-        .ql-editor{
-            border:1px solid #ddd;
+        .question-wrapper{
+            // 投票
+            .votes{
+                margin-right: 24px;
+                display: inline-block;
+                width:40px;
+                height: 55px;
+                background-color: #f3f3f3;
+                text-align: center;
+                font-size: 0;
+                border-radius: 3px;
+                box-sizing: border-box;
+                padding:5px;
+                vertical-align: top;
+
+                &:hover {
+                    background-color: #fff7e2;
+                }
+
+
+                .num {
+                    font-size: 18px;
+                    line-height: 22px;
+                }
+
+                // 箭头
+                .up,
+                .down {
+                    display: inline-block;
+                    border:7px solid transparent;
+                    border-radius: 2px;
+                    cursor: pointer;
+
+                    
+                }
+                .up{
+                    margin-top:-5px;
+                    border-bottom: 10px solid #577575;
+
+                    &:hover{
+                        border-bottom-color: #f6a623;
+                    }
+                    
+                }
+                .down {
+                    border-top: 10px solid #577575;
+
+                    &:hover{
+                        border-top-color: #f6a623;
+                    }
+                }
+            }
+
+            // 富文本编辑器
+            .ql-editor{
+                display: inline-block;
+                width: 762px;
+                border:1px solid #ddd;
+            }
         }
     }
 

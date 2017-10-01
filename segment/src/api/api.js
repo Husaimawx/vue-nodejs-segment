@@ -1,7 +1,8 @@
 import axios from './http';
 import qs from 'qs';
+import BASE from './base.js';
 
-let base = '/node';
+let base = BASE;
 
 // 注册
 export const REGISTER = params => { return axios.post(`${base}/users/register`, qs.stringify(params)); };
