@@ -89,3 +89,8 @@
     )engine=innodb default charset=utf8;
     
 ```
+
+#### TODO
+- *后续前端部分会进一步配置成响应式页面*
+- *有时间的话会尝试用KOA重写服务端*
+- *如果觉得还不错 麻烦随手给个start*
