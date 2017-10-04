@@ -42,7 +42,11 @@ export default {
         logout(){
             LOGOUT().then(res=>{
                 if(res.data.code == 200){
+                    // 显示登录按钮
                     this.$store.commit('toggleLoginBtn',true)
+                    // 改变登录状态
+                    this.$store.commit('loginStatus',false)
+                    // 保存vuex状态
                     this.$store.commit('saveState')
                     this.$router.push({path:'/question'})
                 }

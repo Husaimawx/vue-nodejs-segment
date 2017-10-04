@@ -10,6 +10,9 @@ export const REGISTER = params => { return axios.post(`${base}/users/register`, 
 // 登录
 export const LOGIN = params =>{ return axios.post(`${base}/users/login`,qs.stringify(params));};
 
+// 获取用户信息
+export const GET_USER_INFO = params => { return axios.get(`${base}/users/userinfo`,{params:params});};
+
 // 退出登录
 export const LOGOUT = params =>{ return axios.get(`${base}/users/logout`, {params:params});};
 
@@ -22,8 +25,8 @@ export const QUESTION_LIST = params => {return axios.get(`${base}/question/quest
 // 获取问题详情
 export const QUESTION_DETAIL = params => { return axios.get(`${base}/question/question_detail`,{params:params});};
 
-// 获取用户信息
-export const GET_USER_INFO = params => { return axios.get(`${base}/users/userinfo`,{params:params});};
+// 回答问题
+export const ANSWER = params => { return axios.post(`${base}/question/answer`,qs.stringify(params));}
 
 
 

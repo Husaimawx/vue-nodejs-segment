@@ -202,13 +202,15 @@ module.exports = {
         };
 
         let uid = req.session.sessionID;
+        let q_id = parseInt(req.body.q_id);
+        let a_content = req.body.content;
         // 写答案
         let answerSql = 'insert answers(u_id,q_id,a_content) values(?,?,?)';
-        let anserParam = [];
+        let anserParam = [uid,q_id,a_content];
 
         // question表answer+1
         let uptSql = 'update questions set answer=answer+1 where q_id = ?';
-        let queParams =[];
+        let queParam =[q_id];
         pool.getConnection((err,conn)=>{
             if(err){
                 data.code = 401;
@@ -220,7 +222,7 @@ module.exports = {
                 function(callback){
                     // 写入答案
                     conn.query(answerSql,anserParam,(err,rs)=>{
-                        callback(null,rs)
+                        callback(null,rs);
                     });
                 },
                 function(callback){
@@ -237,6 +239,7 @@ module.exports = {
                     res.send(data);
                     return;
                 }
+                res.send(data);
                 
             });
             conn.release();

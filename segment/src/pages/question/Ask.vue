@@ -163,7 +163,6 @@
                 // todo
                 // 表单验证 错误处理
                 SUBMIT_QUESTION(para).then((res)=>{
-                    console.log(res);
                     // 成功后跳转到问答页
                     if(res.data.code == 200){
                         this.$router.push({path:'/question'})

@@ -24,4 +24,15 @@ router.get('/question_detail',(req,res)=>{
     QuestionModel.questionDetail(req,res);
 });
 
+// 回答问题 撰写答案
+router.post('/answer',(req,res)=>{
+    // 验证session
+    let result = checkSession.check(req);
+    if (result.code == 402) {
+        res.send(result);
+        return;
+    }
+    QuestionModel.answer(req,res);
+});
+
 module.exports = router;

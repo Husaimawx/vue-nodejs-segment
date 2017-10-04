@@ -272,8 +272,11 @@ export default {
             // 关闭登录注册框
             this.hide();
 
-            //关闭 header登录/注册按钮
+            //隐藏 header登录/注册按钮
             this.$store.commit('toggleLoginBtn',false)
+
+            // 更新登录状态
+            this.$store.commit('loginStatus',true);
 
             // 本地保存登录状态
             this.$store.commit('saveState')
