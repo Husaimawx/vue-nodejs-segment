@@ -13,7 +13,6 @@
         </div>
         <hr>
         <!-- 问题详情外层包裹 -->
-
         <div class="question-wrapper">
             <div class="votes">
                 <span class="up"></span>
@@ -25,17 +24,24 @@
             <!-- 问题详情 -->
             <div class="ql-editor" v-html="questionDetail"></div>
         </div>
+
+        <!-- 答案列表 -->
+        <answer-list v-if='answerList.length > 0' :answerList = 'answerList'></answer-list>
+
+        <!-- 回答问题 -->
         <answer></answer>
     </div>
 </template>
 <script>
-import answer from './answer/answer'
+import answer from './answer/Answer'
+import answerList from './answer/AnswerList'
 import { quillEditor } from 'vue-quill-editor'
 import { QUESTION_DETAIL } from '@/api/api'
 
 export default {
     components:{
-        answer
+        answer,
+        answerList
     },
 
     data(){
@@ -49,6 +55,7 @@ export default {
             q_id:0,
             content:"",
             votes:0,
+            answerList:[],
             editorOption: {
                 modules: {
                     toolbar: [
@@ -68,7 +75,7 @@ export default {
         }
     },
     methods:{
-        // 获取问题详情
+        // 获取问题详情/回答列表
         getQueDetail(){
             let para = {
                 q_id: this.q_id
@@ -77,10 +84,13 @@ export default {
                 console.log(res.data)
                 let data  = res.data
                 if(data.code === 200){
-                    this.questionTitle = data.data.title
-                    this.questionDetail = data.data.content
-                    this.username = data.data.username
-                    this.tags = data.data.tags.split(',')
+                    this.answerList = data.data.answerList
+
+                    this.questionTitle = data.data.questionDetail.title
+                    this.questionDetail = data.data.questionDetail.content
+                    this.username = data.data.questionDetail.username
+                    this.tags = data.data.questionDetail.tags.split(',')
+
                     // 计算时间
                     let create_time = new Date(data.data.create_time);
                     let now = new Date();
@@ -234,7 +244,6 @@ export default {
             .ql-editor{
                 display: inline-block;
                 width: 762px;
-                border:1px solid #ddd;
             }
         }
     }

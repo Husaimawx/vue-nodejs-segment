@@ -145,10 +145,10 @@ module.exports = {
         let uptSql = ' update questions set views=views+1 where q_id = ?';
 
         // 回答总数
-        let answerCountSql = 'select count(*) from answers where a_id = ?';
+        let answerCountSql = 'select count(*) from answers where q_id = ?';
 
         // 回答列表
-        let answerSql = 'select a_id as answerId,u.username, a_content as answer, a.create_time as createTime,votes from answer as a INNER JOIN user as u on a.u_id = u.uid where q_id = ?'
+        let answerSql = 'select a_id as answerId,u.username, a_content as answer, a.create_time as createTime,votes from answers as a INNER JOIN user as u on a.u_id = u.uid where q_id = ?';
 
         pool.getConnection((err,conn)=>{
             if(err){
@@ -163,19 +163,25 @@ module.exports = {
                     conn.query(queSql,param,(err,rs)=>{
                         let result = rs[0];
                         result.content = result.content.toString(); 
-                        data.data = result;
-                        // res.send(data);
-                        callback(null,data);
+                        callback(null,result);
                     });
                 },
                 // views+1
                 function(callback){
                     conn.query(uptSql,param,(err,rs)=>{
-                        
                         callback(null,rs);
                     }); 
                     
+                },
+                // 回答总数
+
+                // 回答列表
+                function(callback){
+                    conn.query(answerSql,param,(err,rs)=>{
+                        callback(null,rs);
+                    });
                 }
+
             ],
             function(err,rs){
                 if(err){
@@ -184,7 +190,11 @@ module.exports = {
                     res.send(data);
                     return;
                 }
-                res.send(rs[0]);
+                let result = {};
+                result.questionDetail = rs[0];
+                result.answerList = rs[2];
+                data.data = result;
+                res.send(data);
             });
             conn.release();
         });
@@ -232,15 +242,14 @@ module.exports = {
                     });
                 }
             ],
-            function(err,result){
+            function(err){
                 if(err){
-                    data.code = 401,
-                    data.msg = err.message
+                    data.code = 401;
+                    data.msg = err.message;
                     res.send(data);
                     return;
                 }
                 res.send(data);
-                
             });
             conn.release();
         });

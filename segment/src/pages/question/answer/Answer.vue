@@ -1,7 +1,6 @@
 <template>
     <!-- 答案列表 -->
   <div class="answer">
-        <hr>
         <h3 class="title">撰写答案</h3>
         <div class="rich-text-wrapper clearfix">
             <quill-editor v-model="content" 
