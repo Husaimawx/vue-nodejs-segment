@@ -36,3 +36,6 @@ export const ANSWER = params => { return axios.post(`${base}/question/answer`,qs
 
 // 获取用户列表
 export const GET_USER_LIST = params=>{ return axios.get(`${base}/users/getlist`,{params:params});};
+
+// 提交文件
+export const UPLOAD = params=> { return axios.post(`${base}/question/upload`),qs.stringify(params)};

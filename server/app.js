@@ -17,7 +17,7 @@ app.use(session({
     secret: 'keyboard cat',
     resave: true,
     saveUninitialized: true,
-    cookie: { maxAge: 30 * 60 * 1000 }
+    cookie: { maxAge:5 * 60 * 60 * 1000 }
 }));
 
 // view engine setup
@@ -35,6 +35,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', index);
 app.use('/users', users);
 app.use('/question', question);
+
+
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

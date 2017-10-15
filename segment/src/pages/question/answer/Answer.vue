@@ -7,10 +7,21 @@
                 ref="myQuillEditor"
                 :options="editorOption"
                 @focus="onEditorFocus($event)"
+                @ready="onEditorReady($event)"
                 >
             </quill-editor>
         </div>
-
+         <div class="wrapper">
+             
+             
+            <form method="post" action='./node/question/upload'  enctype="multipart/form-data" id="uploadFormMulti">
+                <!-- <input  type="file" multiple accept="image/jpg,image/jpeg,image/png,image/gif" @change="uploadImg('uploadFormMulti')"> -->
+                <input type="file" name='logo'>
+                <input type="text" name='text'>
+                <!-- <input type="button" value='上传' @click='uploadTest'> -->
+                <input type="submit" value="提交">
+            </form>
+        </div>
         <div class="btn-wrapper">
             <input type="button" value="提交回答" @click="submitAnswer" class="btn-submit">
         </div>
@@ -40,19 +51,14 @@ export default {
                 },
                 placeholder:' '
             },
-            content:''  // 答案
+            content:'',  // 答案
+            uniqueId: '',
+            file:'',
+            text:''
         }
     },
 
     methods:{
-        // 编辑器获取焦点;验证是否登录
-        onEditorFocus(event){
-            if(this.$store.state.hasLogin == false){
-                // 如果未登录 弹出登录框
-                this.$store.commit('showLogin',true)
-            }
-        },
-
         // 提交答案
         submitAnswer(){
             let para = {
@@ -65,7 +71,43 @@ export default {
                     this.$router.go(0)
                 }
             })
+        },
+
+        // 编辑器获取焦点;验证是否登录
+        onEditorFocus(event){
+            if(this.$store.state.hasLogin == false){
+                // 如果未登录 弹出登录框
+                this.$store.commit('showLogin',true)
+            }
+        },
+
+        // 富文本编辑器ready状态
+        onEditorReady(event){
+            // 添加imgHandler
+            this.$refs.myQuillEditor.quill.getModule("toolbar").addHandler("image", this.imgHandler)
+        },
+
+        // imgHandler
+        imgHandler(state) {
+            if (state) {
+                
+                //button is clicked
+                console.log('图片上传')
+            }
+        },
+
+
+        uploadImg(file){
+
+        },
+        uploadTest(){
+            let form = document.getElementById("uploadFormMulti");
+                        
+            form.submit()
         }
+    },
+    mounted(){
+
     }
 
 }

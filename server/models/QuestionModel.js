@@ -253,6 +253,14 @@ module.exports = {
             });
             conn.release();
         });
-    } 
+    } ,
 
+    /**
+     * 上传图片
+     */
+    upload(req,res){
+        let body = req.body;
+        let file = req.files;
+        console.log(req.body);
+    }
 };
