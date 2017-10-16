@@ -81,7 +81,6 @@ export default {
                 q_id: this.q_id
             }
             QUESTION_DETAIL(para).then(res=>{
-                console.log(res.data)
                 let data  = res.data
                 if(data.code === 200){
                     this.answerList = data.data.answerList

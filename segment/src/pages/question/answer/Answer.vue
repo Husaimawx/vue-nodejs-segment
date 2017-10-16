@@ -7,21 +7,17 @@
                 ref="myQuillEditor"
                 :options="editorOption"
                 @focus="onEditorFocus($event)"
-                @ready="onEditorReady($event)"
                 >
             </quill-editor>
         </div>
-         <div class="wrapper">
-             
-             
-            <form method="post" action='./node/question/upload'  enctype="multipart/form-data" id="uploadFormMulti">
-                <!-- <input  type="file" multiple accept="image/jpg,image/jpeg,image/png,image/gif" @change="uploadImg('uploadFormMulti')"> -->
+         <!-- <div class="wrapper">
+            <form method="post" :action='action'  enctype="multipart/form-data" id="uploadFormMulti">
                 <input type="file" name='logo'>
                 <input type="text" name='text'>
-                <!-- <input type="button" value='上传' @click='uploadTest'> -->
                 <input type="submit" value="提交">
+                <img src='../../../../../uploads/logo-1508118793277.png'>
             </form>
-        </div>
+        </div> -->
         <div class="btn-wrapper">
             <input type="button" value="提交回答" @click="submitAnswer" class="btn-submit">
         </div>
@@ -34,15 +30,52 @@ import { ANSWER } from '@/api/api'
 export default {
     data(){
         return {
+            action:'./node/question/upload',  // 图片存储地址
             editorOption: {
                 // some quill options
                 modules: {
-                    toolbar: [
-                        [{ 'size': ['small', false, 'large'] }],
-                        ['bold', 'italic'],
-                        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-                        ['link', 'image']
-                    ],
+                    toolbar: {
+                        container:[
+                            [{ 'size': ['small', false, 'large'] }],
+                            ['bold', 'italic'],
+                            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                            ['link', 'image']
+                        ],
+                        handlers: {
+                            // 重新定义image上传图片
+                            'image': function(){
+                                console.log('iii')
+                                var _this = this;
+                                var inputEle = document.createElement('input');
+                                inputEle.setAttribute('type','file')
+                                inputEle.setAttribute('accept','image/jpg,image/jpeg,image/png,image/gif')
+                                inputEle.style.display = 'none'                                                           
+                                inputEle.addEventListener('change',function(){
+                                    var file = inputEle.files[0]
+                                    // 传送给后台
+                                    console.log(file)
+                                    // https://github.com/quilljs/quill/pull/995
+                                    var xhr = new XMLHttpRequest();
+                                    xhr.open('POST', './node/question/pic', true);
+                                    xhr.onload = function() {
+                                    if (xhr.status === 200) {
+                                        console.log(xhr.responseText)
+                                        callback(xhr.responseText);
+                                    }
+                                    };
+                                    xhr.send(file);                                    
+
+                                    // 获取后台返回的url
+                                    var url = 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
+                                    var range = _this.quill.getSelection(true)
+                                    _this.quill.insertEmbed(range.index,'image',url)
+                                    inputEle.value = ''
+                                });
+                                document.querySelector('.ql-toolbar').appendChild(inputEle);
+                                inputEle.click();
+                            }
+                        }
+                    },
                     history: {
                         delay: 1000,
                         maxStack: 50,
@@ -65,6 +98,8 @@ export default {
                 content: this.content,
                 q_id: parseInt(this.$route.params.q_id)
             }
+            console.log(para)
+            return
             ANSWER(para).then(res=>{
                 console.log(res)
                 if(res.data.code == 200){
@@ -80,34 +115,9 @@ export default {
                 this.$store.commit('showLogin',true)
             }
         },
-
-        // 富文本编辑器ready状态
-        onEditorReady(event){
-            // 添加imgHandler
-            this.$refs.myQuillEditor.quill.getModule("toolbar").addHandler("image", this.imgHandler)
-        },
-
-        // imgHandler
-        imgHandler(state) {
-            if (state) {
-                
-                //button is clicked
-                console.log('图片上传')
-            }
-        },
-
-
-        uploadImg(file){
-
-        },
-        uploadTest(){
-            let form = document.getElementById("uploadFormMulti");
-                        
-            form.submit()
-        }
+        
     },
     mounted(){
-
     }
 
 }
