@@ -90,28 +90,43 @@ export default {
                     this.username = data.data.questionDetail.username
                     this.tags = data.data.questionDetail.tags.split(',')
 
-                    // 计算时间
-                    let create_time = new Date(data.data.create_time);
-                    let now = new Date();
-                    let sec = (now - create_time)/1000;    // 转换为s
-                    let min = sec/60;
-                    let hour = min/60;
-                    let day = hour/24
-
-                    if(Math.round(min) < 1){
-                        this.time = Math.round(sec)+'秒'
-                    }
-                    else if(Math.round(hour) < 1){
-                        this.time = Math.round(min) + '分钟'
-                    }
-                    else if(Math.round(day)< 1){
-                        this.time = Math.round(hour) + '小时'
-                    }
-                    else {
-                        this.time = Math.round(day) + '天'
-                    }
+                    let time = data.data.questionDetail.create_time
+                    // 格式化提问时间
+                    let createTime = new Date(time);
+                    this.time = this.formatTime(createTime)
                 }
             })    
+        },
+
+        // 格式化时间
+        formatTime(createTime){
+            let now = new Date();
+            let sec = (now - createTime)/1000;
+            let min = sec/60;
+            let hour = min/60;
+            let day = hour/24
+            let mounth = day/30 
+            let year = mounth/12
+
+            let time;
+            if(Math.round(min) < 1){
+                time = Math.round(sec)+'秒'
+            }
+            else if(Math.round(hour) < 1){
+                time = Math.round(min) + '分钟'
+            }
+            else if(Math.round(day)< 1){
+                time = Math.round(hour) + '小时'
+            }
+            else if(Math.round(mounth)<1){
+                time = Math.round(day) + '天'
+            }
+            else if (Math.round(year)<1){
+                time = Math.round(mounth) + '月'
+            }else {
+                time = Math.round(year) + '年'
+            }
+            return time
         }
     },
     mounted(){

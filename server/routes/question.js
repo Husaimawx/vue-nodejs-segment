@@ -8,18 +8,18 @@ var QuestionModel = require('../models/QuestionModel');
 var checkSession = require('../session/CheckSession'); 
 
 // 设置图片文件储存地址
-var storage = multer.diskStorage({
-    //uploads文件夹需手动在跟目录下创建
-    destination: function (req, file, cb) {
-        cb(null, 'uploads/');
-    },
-    //给上传文件重命名，获取添加后缀名
-    filename: function (req, file, cb) {
-        var fileFormat = (file.originalname).split('.');
-        cb(null, file.fieldname + '-' + Date.now() + '.' + fileFormat[fileFormat.length - 1]);
-    }
-});
-var upload = multer({ storage: storage });
+// var storage = multer.diskStorage({
+//     //uploads文件夹需手动在跟目录下创建
+//     destination: function (req, file, cb) {
+//         cb(null, 'uploads/');
+//     },
+//     //给上传文件重命名，获取添加后缀名
+//     filename: function (req, file, cb) {
+//         var fileFormat = (file.originalname).split('.');
+//         cb(null, file.fieldname + '-' + Date.now() + '.' + fileFormat[fileFormat.length - 1]);
+//     }
+// });
+// var upload = multer({ storage: storage });
 
 
 //=============================================
@@ -55,20 +55,20 @@ router.post('/answer',(req,res)=>{
     QuestionModel.answer(req,res);
 });
 
-//================
+//======================================================
 // 保存上传的图片
-router.post('/upload',upload.single('logo'),function(req,res,next){
-    var path = req.file.path;   // 文件路径
-    let body = req.body;
-    let file = req.file;
-    let flash = req.flash;
-    // QuestionModel.upload(req,res);
-    res.end(path);
-});
+// router.post('/upload',upload.single('image'),function(req,res,next){
+//     var path = req.file.path;   // 文件路径
+//     let body = req.body;
+//     let file = req.file;
+//     let flash = req.flash;
+//     res.end(path);
+// });
 
-router.post('/pic',function(req,res){
-    console.log(req.body);
-    let file = req.body;
-    res.end('suc'); // 能接收到
-});
+// router.post('/pic',function(req,res){
+//     let file = req.file;
+//     res.end('suc'); // 能接返回
+// });
+
+
 module.exports = router;

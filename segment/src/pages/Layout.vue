@@ -24,11 +24,13 @@ export default {
     },
 
     methods:{
-        // 刷新后还原vuex
+        // 刷新页面后还原vuex
         updateVuex(){
             let payload = JSON.parse(sessionStorage.getItem('segment_state'));
-            this.$store.commit('resetState',payload)
-        }
+            if(payload) {
+                this.$store.commit('resetState',payload)
+            }
+        }    
     },
 
     mounted(){

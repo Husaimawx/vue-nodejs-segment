@@ -32,7 +32,9 @@ export default {
             let min = sec/60;
             let hour = min/60;
             let day = hour/24
-            let time = ''
+            let mounth = day/30 
+            let year = mounth/12
+            let time;
 
             if(Math.round(min) < 1){
                 time = Math.round(sec)+'秒'
@@ -43,10 +45,15 @@ export default {
             else if(Math.round(day)< 1){
                 time = Math.round(hour) + '小时'
             }
-            else {
+            else if(Math.round(mounth)<1){
                 time = Math.round(day) + '天'
             }
-            return time;
+            else if (Math.round(year)<1){
+                time = Math.round(mounth) + '月'
+            }else {
+                time = Math.round(year) + '年'
+            }
+            return time
         }
     }
 }
@@ -74,7 +81,7 @@ export default {
 
             // 投票
             .votes{
-                margin-right: 21px;
+                margin-right: 20px;
                 display: inline-block;
                 width:40px;
                 height: 55px;
@@ -128,6 +135,14 @@ export default {
             .ql-editor{
                 display: inline-block;
                 width: 762px;
+                margin:0;
+                padding:0;
+            }
+
+            .author {
+                padding-left: 60px;
+                color: @gray-l;
+                margin-top: 30px;
             }
         }
 

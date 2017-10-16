@@ -15,7 +15,7 @@
                 <input type="file" name='logo'>
                 <input type="text" name='text'>
                 <input type="submit" value="提交">
-                <img src='../../../../../uploads/logo-1508118793277.png'>
+                <img src='http://localhost/99imguploads/sep20th.png'>
             </form>
         </div> -->
         <div class="btn-wrapper">
@@ -42,38 +42,37 @@ export default {
                             ['link', 'image']
                         ],
                         handlers: {
-                            // 重新定义image上传图片
-                            'image': function(){
-                                console.log('iii')
-                                var _this = this;
-                                var inputEle = document.createElement('input');
-                                inputEle.setAttribute('type','file')
-                                inputEle.setAttribute('accept','image/jpg,image/jpeg,image/png,image/gif')
-                                inputEle.style.display = 'none'                                                           
-                                inputEle.addEventListener('change',function(){
-                                    var file = inputEle.files[0]
-                                    // 传送给后台
-                                    console.log(file)
-                                    // https://github.com/quilljs/quill/pull/995
-                                    var xhr = new XMLHttpRequest();
-                                    xhr.open('POST', './node/question/pic', true);
-                                    xhr.onload = function() {
-                                    if (xhr.status === 200) {
-                                        console.log(xhr.responseText)
-                                        callback(xhr.responseText);
-                                    }
-                                    };
-                                    xhr.send(file);                                    
+                            // 配置image图片与文字分开存储
+                            // 'image': function(){
+                            //     var _this = this;
+                            //     var inputEle = document.createElement('input');
+                            //     inputEle.setAttribute('type','file')
+                            //     inputEle.setAttribute('accept','image/jpg,image/jpeg,image/png,image/gif')
+                            //     inputEle.style.display = 'none'                                                           
+                            //     inputEle.addEventListener('change',function(){
+                            //         var formData = new FormData();
+                            //         var file = inputEle.files[0]
+                            //         formData.append('image', file);
+                            //         // 传送给服务端 获取后台返回的地址
+                            //         // 或是使用axios传递皆可
+                            //         var xhr = new XMLHttpRequest();
+                            //         xhr.open('POST', './node/question/upload', true);
+                            //         xhr.onload = function() {
+                            //             if (xhr.status === 200) {
+                            //                 console.log('success')
+                            //             }
+                            //         };
+                            //         xhr.send(formData);                                    
 
-                                    // 获取后台返回的url
-                                    var url = 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
-                                    var range = _this.quill.getSelection(true)
-                                    _this.quill.insertEmbed(range.index,'image',url)
-                                    inputEle.value = ''
-                                });
-                                document.querySelector('.ql-toolbar').appendChild(inputEle);
-                                inputEle.click();
-                            }
+                            //         // 获取后台返回的url
+                            //         var url = 'http://localhost/99imguploads/sep20th.png'
+                            //         var range = _this.quill.getSelection(true)
+                            //         _this.quill.insertEmbed(range.index,'image',url)
+                            //         inputEle.value = ''
+                            //     });
+                            //     document.querySelector('.ql-toolbar').appendChild(inputEle);
+                            //     inputEle.click();
+                            // }
                         }
                     },
                     history: {
@@ -98,8 +97,6 @@ export default {
                 content: this.content,
                 q_id: parseInt(this.$route.params.q_id)
             }
-            console.log(para)
-            return
             ANSWER(para).then(res=>{
                 console.log(res)
                 if(res.data.code == 200){
