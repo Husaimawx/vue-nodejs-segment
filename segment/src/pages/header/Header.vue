@@ -3,7 +3,7 @@
         <div class="title-content clearfix">
             <div class="logo pointer" @click="goRouter('/question',0)">segment<span class="green">fault</span></div>
             
-            <!-- 一级导航 -->
+            <!-- 一级导航 headNav-->
             <ul class="title-list" v-if="writeTypeCode == -1">
                 <li class="title-item pointer" :class='{active: activeNav == 0}' @click="goRouter('/question',0)">问答</li>
                 <li class="title-item pointer" :class='{active: activeNav == 1}' @click="goRouter('/question',1)">头条</li>
@@ -13,7 +13,7 @@
                 <li class="title-item pointer" :class='{active: activeNav == 5}' @click="goRouter('/question',5)">活动</li>
             </ul>
 
-            <!-- 一级导航 -->
+            <!-- 一级导航 问题类型-->
             <div class="write-mode" v-else>
                 {{writeType}}
             </div>

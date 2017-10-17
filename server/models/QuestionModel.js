@@ -105,6 +105,9 @@ module.exports = {
                                 e.tagName = e.tagName.split(',');
                             });
                             callback(null,rs);
+                        }else {
+                            // 无数据
+                            callback(null,'');
                         }
                     });
                 }
@@ -121,7 +124,6 @@ module.exports = {
                 data.data = result[1];
                 res.send(data);
             });
-
             conn.release();
         });
     },

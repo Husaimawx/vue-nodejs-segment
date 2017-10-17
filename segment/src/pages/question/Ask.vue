@@ -54,20 +54,21 @@
                 tagList:[   // 默认 开发语言
                     { id:1,item:'JavaScript' },
                     { id:2,item:'php' },
-                    { id:3,item:'css' },
-                    { id:3,item:'html' },
-                    { id:3,item:'java' },
-                    { id:3,item:'python' },
-                    { id:3,item:'c++' }
+                    { id:3,item:'nodejs' },
+                    { id:4,item:'css' },
+                    { id:5,item:'html' },
+                    { id:6,item:'java' },
+                    { id:7,item:'python' },
+                    { id:8,item:'c++' }
                  ],
                 languageItems: [    // 开发语言
                     { id:1,item:'JavaScript' },
                     { id:2,item:'php' },
                     { id:3,item:'css' },
-                    { id:3,item:'html' },
-                    { id:3,item:'java' },
-                    { id:3,item:'python' },
-                    { id:3,item:'c++' }
+                    { id:4,item:'html' },
+                    { id:5,item:'java' },
+                    { id:6,item:'python' },
+                    { id:7,item:'c++' }
                 ],
                 paltformItems:[     // 开发平台
                     { id:1, item: 'laravel' },
@@ -165,7 +166,10 @@
                 SUBMIT_QUESTION(para).then((res)=>{
                     // 成功后跳转到问答页
                     if(res.data.code == 200){
-                        this.$router.push({path:'/question'})
+                        // this.$router.push({path:'/question'})
+                        this.$router.go(-1);
+                        this.$store.commit('updateWriteTypeCode',-1)
+                        this.$store.commit('saveState')
                     }
                 })
             },
