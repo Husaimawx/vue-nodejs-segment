@@ -15,11 +15,11 @@
         <!-- 问题详情外层包裹 -->
         <div class="question-wrapper">
             <div class="votes">
-                <span class="up"></span>
+                <span class="up" @click="likeQue"></span>
                 <br>
                 <span class="num">{{votes}}</span>
                 <br>
-                <span class="down"></span>
+                <span class="down" @click='disLikeQue'></span>
             </div>
             <!-- 问题详情 -->
             <div class="ql-editor" v-html="questionDetail"></div>
@@ -36,7 +36,7 @@
 import answer from './answer/Answer'
 import answerList from './answer/AnswerList'
 import { quillEditor } from 'vue-quill-editor'
-import { QUESTION_DETAIL } from '@/api/api'
+import { QUESTION_DETAIL, VOTE } from '@/api/api'
 
 export default {
     components:{
@@ -127,6 +127,24 @@ export default {
                 time = Math.round(year) + '年'
             }
             return time
+        },
+
+        // 投票赞成
+        likeQue(){
+           let param = {
+               type: 0,     // 0:question, 1: answer
+               vote: 1,    
+               q_id: this.q_id
+           }
+           VOTE(param).then(res=>{
+               console.log(res)
+           })
+
+        },
+
+        // 投票反对
+        disLikeQue(){
+
         }
     },
     mounted(){

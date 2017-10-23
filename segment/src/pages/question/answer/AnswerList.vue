@@ -5,11 +5,11 @@
         </li>
         <li class="answer-wrapper" v-for="(item,index) in answerList" :key='index'>
             <div class="votes">
-                <span class="up"></span>
+                <span class="up" @click='likeAnswer'></span>
                 <br>
                 <span class="num">{{item.votes}}</span>
                 <br>
-                <span class="down"></span>
+                <span class="down" @click='disLikeAnswer'></span>
             </div>
             <!-- 答案详情 -->
             <div class="ql-editor" v-html="item.answer"></div>
@@ -54,6 +54,17 @@ export default {
                 time = Math.round(year) + '年'
             }
             return time
+        }
+    },
+    methods:{
+        // 投票赞成
+        likeAnswer(){
+
+        },
+        
+        // 投票反对
+        disLikeAnswer(){
+
         }
     }
 }

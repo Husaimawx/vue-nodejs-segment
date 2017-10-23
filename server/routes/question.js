@@ -55,6 +55,16 @@ router.post('/answer',(req,res)=>{
     QuestionModel.answer(req,res);
 });
 
+// 问题/答案 投票
+router.post('/vote',(req,res)=>{
+    let result = checkSession.check(req);
+    if (result.code == 402) {
+        res.send(result);
+        return;
+    }
+    QuestionModel.vote(req,res);
+});
+
 //======================================================
 // 保存上传的图片
 // router.post('/upload',upload.single('image'),function(req,res,next){

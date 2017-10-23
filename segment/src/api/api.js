@@ -26,7 +26,10 @@ export const QUESTION_LIST = params => {return axios.get(`${base}/question/quest
 export const QUESTION_DETAIL = params => { return axios.get(`${base}/question/question_detail`,{params:params});};
 
 // 回答问题
-export const ANSWER = params => { return axios.post(`${base}/question/answer`,qs.stringify(params));}
+export const ANSWER = params => { return axios.post(`${base}/question/answer`,qs.stringify(params));};
+
+// 问题/答案 投票
+export const VOTE = params => { return axios.post(`${base}/question/vote`,qs.stringify(params));};
 
 
 

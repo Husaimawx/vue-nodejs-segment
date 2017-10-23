@@ -255,7 +255,94 @@ module.exports = {
             });
             conn.release();
         });
-    } ,
+    },
 
+    /**
+     * 问题/答案投票
+     * method POST
+     * @type 0:问题; 1:答案
+     * @vote 0: 反对; 1: 赞成
+     * 
+     */
+    vote(req,res){
+        let data = {
+            code: 200,
+            msg: 'success',
+            data: ''
+        };
+        let uid = req.session.sessionID; 
+        let type = req.body.type;
+        let qid = req.body.q_id;
+        
+        let selectQueSql = 'select vote_questions from user where uid = ?';
+        let selectAnswerSql = 'select vote_answers from user where uid = ?';
+
+        let uptQueSql = 'update user set vote_questions = ? where uid = ?';
+        let uptAnswerSql = 'update user set vote_answers = ? where uid = ?';
+
+        pool.getConnection((err,conn)=>{
+            if(err){
+                data.code = 401;
+                data.msg = err.message;
+                res.send(data);
+                return;
+            }
+            if(type == 0){     // vote_questions
+                async.waterfall([
+                    function(callback) {
+                        conn.query(selectQueSql,[uid],(err,rs)=>{
+                            let result = rs[0].vote_questions;
+                            callback(null, result);
+                        });
+                    },
+                    function(rs, callback) {
+                        if(rs){
+                            let votes = rs.split();
+                            // 遍历数组votes 如果 qid 不在其中 则添加 否则 给已赞的提示
+                            // 或者前端验证是否已赞过 在此省略二次验证
+                            votes.push(qid);
+                            let uptVotes = votes.join();
+
+                            conn.query(uptQueSql,[uptVotes,uid],(err,rs)=>{
+                                callback(null, 'two');
+                            });
+                        }else {
+                            conn.query(uptQueSql,[qid,uid],(err,rs)=>{
+                                callback(null, 'two');
+                            });
+                        }
+                    },
+                    
+                ],
+                function (err) {
+                    // result now equals 'done'
+                    if(err){
+                        data.code = 401;
+                        data.msg = err.message;
+                        res.send(data);
+                        return;
+                    }
+                    res.send(data);
+                });
+                conn.release();
+
+            }else if(type == 1){   // vote_answers
+                async.waterfall([
+                    function(callback) {
+                        callback(null, 'one', 'two');
+                    },
+                    function(arg1, arg2, callback) {
+                        // arg1 now equals 'one' and arg2 now equals 'two'
+                        callback(null, 'three');
+                    },
+                    
+                ], function (err, result) {
+                    // result now equals 'done'
+                });
+            }
+            
+        });
+
+    }
    
 };
