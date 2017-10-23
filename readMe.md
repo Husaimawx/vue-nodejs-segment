@@ -48,6 +48,8 @@
         `username` varchar(120) NOT NULL,
         `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
         `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+        `vote_questions` TEXT COMMENT '已投票的问题id',
+        `vote_answers` TEXT COMMENT '已投票答案id',
         PRIMARY KEY (`uid`),
         UNIQUE KEY `username_unique` (`username`),
         UNIQUE KEY `email_unique` (`email`),
