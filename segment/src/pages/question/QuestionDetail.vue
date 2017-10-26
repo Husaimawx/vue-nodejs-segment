@@ -26,7 +26,7 @@
         </div>
 
         <!-- 答案列表 -->
-        <answer-list v-if='answerList.length > 0' :answerList = 'answerList'></answer-list>
+        <answer-list v-if='answerList.length > 0' :answerList = 'answerList' @refreshVotes='getQueDetail'></answer-list>
 
         <!-- 回答问题 -->
         <answer></answer>
@@ -89,6 +89,7 @@ export default {
                     this.questionDetail = data.data.questionDetail.content
                     this.username = data.data.questionDetail.username
                     this.tags = data.data.questionDetail.tags.split(',')
+                    this.votes = data.data.questionDetail.totalVotes
 
                     let time = data.data.questionDetail.create_time
                     // 格式化提问时间
@@ -133,18 +134,29 @@ export default {
         likeQue(){
            let param = {
                type: 0,     // 0:question, 1: answer
-               vote: 1,    
+               vote: 1,     // 1:赞成
                q_id: this.q_id
            }
            VOTE(param).then(res=>{
-               console.log(res)
+               if(res.data.code == 200){
+                   this.getQueDetail()
+               }
            })
 
         },
 
         // 投票反对
         disLikeQue(){
-
+            let param = {
+                type: 0,     // 0:question, 1: answer
+                vote: -1,    // -1: 反对
+                q_id: this.q_id
+            }
+            VOTE(param).then(res=>{
+                if(res.data.code == 200){
+                    this.getQueDetail()
+                }
+            })
         }
     },
     mounted(){

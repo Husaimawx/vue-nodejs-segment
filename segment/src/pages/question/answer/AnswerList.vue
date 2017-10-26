@@ -5,11 +5,11 @@
         </li>
         <li class="answer-wrapper" v-for="(item,index) in answerList" :key='index'>
             <div class="votes">
-                <span class="up" @click='likeAnswer'></span>
+                <span class="up" @click='likeAnswer(item.answerId)'></span>
                 <br>
                 <span class="num">{{item.votes}}</span>
                 <br>
-                <span class="down" @click='disLikeAnswer'></span>
+                <span class="down" @click='disLikeAnswer(item.answerId)'></span>
             </div>
             <!-- 答案详情 -->
             <div class="ql-editor" v-html="item.answer"></div>
@@ -22,6 +22,8 @@
     </ul>
 </template>
 <script>
+import { VOTE } from '@/api/api'
+
 export default {
     props: ['answerList'],
     filters:{
@@ -58,13 +60,33 @@ export default {
     },
     methods:{
         // 投票赞成
-        likeAnswer(){
-
+        likeAnswer(answerId){
+            let param = {
+               type: 1,     // 0:question, 1: answer
+               vote: 1,     // 1:赞成
+               a_id: answerId
+           }
+           VOTE(param).then(res=>{
+               console.log(res)
+               if(res.data.code == 200){
+                   this.$emit('refreshVotes')
+               }
+           })
         },
         
         // 投票反对
-        disLikeAnswer(){
-
+        disLikeAnswer(answerId){
+            let param = {
+               type: 1,     // 0:question, 1: answer
+               vote: -1,     // 1:赞成
+               a_id: answerId
+           }
+           VOTE(param).then(res=>{
+               if(res.data.code == 200){
+                   // 成功后更新votes
+                   this.$emit('refreshVotes')
+               }
+           })
         }
     }
 }

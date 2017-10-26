@@ -130,7 +130,7 @@ module.exports = {
 
     /**
      * 获取问题详情
-     * todo/回答列表
+     * @qid 问题id
      */
     questionDetail(req,res){
         let data = {
@@ -140,7 +140,7 @@ module.exports = {
         };
         
         // 查看问题详情
-        let queSql = 'select q.q_title as title, q.q_content as content,u.username, q.q_tag as tags, q.create_time, q.last_res_time,q.last_res_id from questions as q inner join user as u on q.user_id = u.uid where q_id=?';
+        let queSql = 'select q.q_title as title, q.q_content as content,u.username, q.q_tag as tags, q.votes as totalVotes, q.create_time, q.last_res_time,q.last_res_id from questions as q inner join user as u on q.user_id = u.uid where q_id=?';
         let param = req.query.q_id;
 
         // views+1
@@ -260,8 +260,10 @@ module.exports = {
     /**
      * 问题/答案投票
      * method POST
-     * @type 0:问题; 1:答案
-     * @vote 0: 反对; 1: 赞成
+     * @ type 0:问题; 1:答案
+     * @ vote 1: 赞成; -1: 反对;
+     * @ q_id 问题id
+     * @ a_id 答案id
      * 
      */
     vote(req,res){
@@ -271,14 +273,22 @@ module.exports = {
             data: ''
         };
         let uid = req.session.sessionID; 
-        let type = req.body.type;
-        let qid = req.body.q_id;
+        let type = req.body.type;   
+        let qid = req.body.q_id;   
+        let aid = req.body.a_id;   
+        let vote = req.body.vote ;
         
+        // 查询用户已赞的问题/回答
         let selectQueSql = 'select vote_questions from user where uid = ?';
         let selectAnswerSql = 'select vote_answers from user where uid = ?';
 
+        // 更新用户已赞的问题/回答
         let uptQueSql = 'update user set vote_questions = ? where uid = ?';
         let uptAnswerSql = 'update user set vote_answers = ? where uid = ?';
+
+        // 更新问题/答案得票总数
+        let uptVotesSql = 'update questions set votes= votes+? where q_id = ?';
+        let uptAnswerVotesSql = 'update answers set votes= votes+? where a_id = ?';
 
         pool.getConnection((err,conn)=>{
             if(err){
@@ -287,35 +297,64 @@ module.exports = {
                 res.send(data);
                 return;
             }
-            if(type == 0){     // vote_questions
+            if(type == 0){     // vote_questions 对问题投票
                 async.waterfall([
+                    // 查看该用户已投过票的所有问题id
                     function(callback) {
                         conn.query(selectQueSql,[uid],(err,rs)=>{
                             let result = rs[0].vote_questions;
                             callback(null, result);
                         });
                     },
+                    // 投票
                     function(rs, callback) {
+                        let hasVoted = false; 
+                        // votes_questions 不为空
                         if(rs){
-                            let votes = rs.split();
+                            let votes = rs.split(',');
                             // 遍历数组votes 如果 qid 不在其中 则添加 否则 给已赞的提示
-                            // 或者前端验证是否已赞过 在此省略二次验证
-                            votes.push(qid);
-                            let uptVotes = votes.join();
-
-                            conn.query(uptQueSql,[uptVotes,uid],(err,rs)=>{
-                                callback(null, 'two');
-                            });
-                        }else {
+                      
+                            for(let i=0; i<votes.length; i++){
+                                if (votes[i] == qid) {
+                                    hasVoted = true;
+                                    break;
+                                }
+                            }
+                            if(hasVoted){
+                                // 已投票 不能重复投
+                                data.code = 400;
+                                data.msg = '您已投票,不能重复投票';
+                                callback(null,hasVoted,qid);
+                            }else {
+                                // 投票
+                                votes.push(qid);
+                                let uptVotes = votes.join();
+                                conn.query(uptQueSql,[uptVotes,uid],(err,rs)=>{
+                                    callback(null, hasVoted,qid);
+                                });
+                            }
+                        }
+                        // votes_questions 为空
+                        else {
                             conn.query(uptQueSql,[qid,uid],(err,rs)=>{
-                                callback(null, 'two');
+                                callback(null, hasVoted,qid);
                             });
                         }
                     },
+                    // 更新问题票数
+                    function(hasVoted,qid,callback){
+                        if(hasVoted){
+                            callback(null,'该问题已投票,不能重复');
+                        }else {
+                            conn.query(uptVotesSql,[vote,qid],(err,rs)=>{
+                                callback(null,'投票成功');
+                            });
+                        }
+                        
+                    }
                     
-                ],
-                function (err) {
-                    // result now equals 'done'
+                ], 
+                function (err,result) {
                     if(err){
                         data.code = 401;
                         data.msg = err.message;
@@ -325,20 +364,72 @@ module.exports = {
                     res.send(data);
                 });
                 conn.release();
-
-            }else if(type == 1){   // vote_answers
+            }
+            // vote_answers 对答案投票
+            else if(type == 1){ 
                 async.waterfall([
+                    // 查看该用户已投过票的所有答案id
                     function(callback) {
-                        callback(null, 'one', 'two');
+                        conn.query(selectAnswerSql,[uid],(err,rs)=>{
+                            let result = rs[0].vote_answers;
+                            callback(null, result);
+                        });
                     },
-                    function(arg1, arg2, callback) {
-                        // arg1 now equals 'one' and arg2 now equals 'two'
-                        callback(null, 'three');
+                    // 投票
+                    function(rs,callback) {
+                        // vote_answers 不为空
+                        let hasVoted = false;
+                        if(rs){
+                            let votes = rs.split(',');
+                            // 遍历数组votes 如果 qid 不在其中 则添加 否则 给已赞的提示
+                            for(let i=0; i<votes.length; i++){
+                                if (votes[i] == aid) {
+                                    hasVoted = true;
+                                    break;
+                                }
+                            }
+                            if(hasVoted){
+                                // 已投票 不能重复投
+                                data.code = 400;
+                                data.msg = '您已投票,不能重复投票';
+                                callback(null,hasVoted,aid);
+                            }else {
+                                // 投票
+                                votes.push(aid);
+                                let uptVotes = votes.join();
+                                conn.query(uptAnswerSql,[uptVotes,uid],(err,rs)=>{
+                                    callback(null, hasVoted,aid);
+                                });
+                            }
+                        }
+                        // vote_answers 为空
+                        else {
+                            conn.query(uptAnswerSql,[aid,uid],(err,rs)=>{
+                                callback(null, hasVoted,aid);
+                            });
+                        }
                     },
-                    
-                ], function (err, result) {
-                    // result now equals 'done'
+                    // 更新答案获得的票数
+                    function(hasVoted,qid,callback){
+                        if(hasVoted){
+                            callback(null,'该问题已投票,不能重复');
+                        }else {
+                            conn.query(uptAnswerVotesSql,[vote,aid],(err,rs)=>{
+                                callback(null,'投票成功');
+                            });
+                        }
+                    }
+                ], 
+                function (err, result) {
+                    if(err){
+                        data.code = 401;
+                        data.msg = err.message;
+                        res.send(data);
+                        return;
+                    }
+                    res.send(data);
                 });
+                conn.release();
             }
             
         });

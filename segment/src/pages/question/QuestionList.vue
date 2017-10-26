@@ -119,7 +119,6 @@ export default {
                         this.pages.push(i)
                     }
                 }
-                console.log(this.currentPage);
             })
         },
         
