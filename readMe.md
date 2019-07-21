@@ -95,8 +95,4 @@
 ### Notes    
 - `segment/src/pages/question/answer/Answer.vue` 中有配置富文本编辑器`vue-quill-editor`图片内容分开存储的方法, 服务端暂未配合实现
 
-### TODO
-- *项目持续维护中,有时间就写一些, 尽量做到高度还原segmentfault论坛页面*
-- *后续前端部分会进一步配置成响应式页面*
-- *有时间的话会尝试用KOA重写服务端*
-- *如果觉得还不错 麻烦随手给个start*
+
